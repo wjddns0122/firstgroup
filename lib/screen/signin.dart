@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:login_ui/style/app_color.dart';
-import 'package:login_ui/widgets/button.dart';
+import 'package:login_ui/style/text_style.dart';
 import 'package:login_ui/widgets/formfield.dart';
 import 'package:login_ui/widgets/richtext.dart';
 
@@ -20,10 +20,31 @@ class _SigninState extends State<Signin> {
   final _emailcontroller = TextEditingController();
   final _passwordcontroller = TextEditingController();
 
-  void signIn() {
-    auth.signInWithEmailAndPassword(
+  void signIn() async {
+    try {
+      await auth.signInWithEmailAndPassword(
         email: _emailcontroller.value.text.trim(),
-        password: _passwordcontroller.value.text.trim());
+        password: _passwordcontroller.value.text.trim(),
+      );
+    } catch (e) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('오류'),
+            content: const Text('로그인 중에 오류가 발생했습니다.'),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('확인'),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          );
+        },
+      );
+    }
   }
 
   @override
@@ -49,7 +70,8 @@ class _SigninState extends State<Signin> {
               onTap: () {
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => const SignUp()),
+                  MaterialPageRoute(
+                      builder: (context) => const ExitConfirmationDialog()),
                 );
               },
             ),
@@ -111,7 +133,8 @@ class _SigninState extends State<Signin> {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => const Why()));
+                                      builder: (context) =>
+                                          const ResetPasswordPage()));
                             },
                             child: Text(
                               "비밀번호를 잊어버렸나요?",
@@ -123,7 +146,21 @@ class _SigninState extends State<Signin> {
                         ),
                       ],
                     ),
-                    AuthButton(onPressed: signIn, text: 'Sign In'),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                      child: ElevatedButton(
+                        onPressed: signIn,
+                        style: ElevatedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15)),
+                            fixedSize: const Size(600, 50),
+                            backgroundColor: AppColors.blue),
+                        child: const Text(
+                          'Sign In',
+                          style: KTextStyle.authButtonTextStyle,
+                        ),
+                      ),
+                    ),
                     CustomRichText(
                       discription: "계정을 갖고 계시지 않은 가요?",
                       text: "Sign Up",
@@ -143,23 +180,114 @@ class _SigninState extends State<Signin> {
   }
 }
 
-class Why extends StatelessWidget {
-  const Why({super.key});
+class ResetPasswordPage extends StatefulWidget {
+  const ResetPasswordPage({super.key});
+
+  @override
+  // ignore: library_private_types_in_public_api
+  _ResetPasswordPageState createState() => _ResetPasswordPageState();
+}
+
+class _ResetPasswordPageState extends State<ResetPasswordPage> {
+  final TextEditingController _emailController = TextEditingController();
+
+  void _resetPassword() async {
+    String email = _emailController.text.trim();
+    if (email.isNotEmpty) {
+      try {
+        await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+        // ignore: use_build_context_synchronously
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('비밀번호 재설정 이메일 전송'),
+              content: const Text('비밀번호 재설정 이메일이 전송되었습니다.'),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text('확인'),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      } catch (e) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('오류'),
+              content: const Text('비밀번호 재설정 이메일을 보내는 중에 오류가 발생했습니다.'),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text('확인'),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.blue,
-        title: const Text('힝'),
+        title: const Text('비밀번호 재설정'),
+        backgroundColor: AppColors.blue,
       ),
-      backgroundColor: Colors.white,
-      body: const Center(
-        child: Text(
-          '왜 까먹었어!!!',
-          style: TextStyle(fontSize: 30),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            TextField(
+              controller: _emailController,
+              decoration: const InputDecoration(
+                labelText: '이메일',
+              ),
+            ),
+            const SizedBox(height: 16.0),
+            ElevatedButton(
+              onPressed: _resetPassword,
+              child: const Text('비밀번호 재설정 이메일 보내기'),
+            ),
+          ],
         ),
       ),
+    );
+  }
+}
+
+class ExitConfirmationDialog extends StatelessWidget {
+  const ExitConfirmationDialog({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('나가기 확인'),
+      content: const Text('정말로 나가시겠습니까?'),
+      actions: <Widget>[
+        TextButton(
+          child: const Text('아니오'),
+          onPressed: () {
+            Navigator.of(context).pop(false); // 다이얼로그 닫기
+          },
+        ),
+        TextButton(
+          child: const Text('예'),
+          onPressed: () {
+            Navigator.of(context).pop(true); // 다이얼로그 닫기
+          },
+        ),
+      ],
     );
   }
 }
