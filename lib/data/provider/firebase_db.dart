@@ -22,4 +22,12 @@ class TodoApi {
     return firebasestore.collection('todo').doc().set(
         {'todo': todoModel.todo, 'time': Timestamp.now(), 'isDone': false});
   }
+
+  static void updateTodo(String id) {
+    firebasestore.collection('todo').doc(id).update({'isDone': true});
+  }
+
+  static void deleteTodo(String id) {
+    firebasestore.collection('todo').doc(id).delete();
+  }
 }

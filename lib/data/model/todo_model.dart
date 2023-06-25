@@ -1,4 +1,5 @@
 import "package:cloud_firestore/cloud_firestore.dart";
+import "package:flutter/material.dart";
 
 class TodoModel {
   final String? id;
@@ -19,4 +20,11 @@ class TodoModel {
   factory TodoModel.toJson(String todo) {
     return TodoModel(todo: todo);
   }
+}
+
+class CategoryModel {
+  final String name;
+  final Widget page;
+
+  CategoryModel({required this.name, required this.page});
 }

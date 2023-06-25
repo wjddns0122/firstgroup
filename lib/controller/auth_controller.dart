@@ -24,7 +24,7 @@ class AuthController extends GetxController {
     if (user == null) {
       Get.offAll(() => const Signin());
     } else {
-      Get.offAll(() => const HomeScreen());
+      Get.offAll(() => HomeScreen());
     }
   }
 
@@ -32,7 +32,7 @@ class AuthController extends GetxController {
     try {
       await firebaseAuth.createUserWithEmailAndPassword(
           email: email, password: password);
-    // ignore: empty_catches
+      // ignore: empty_catches
     } catch (firebaseAuthException) {}
   }
 
@@ -40,7 +40,7 @@ class AuthController extends GetxController {
     try {
       await firebaseAuth.signInWithEmailAndPassword(
           email: email, password: password);
-    // ignore: empty_catches
+      // ignore: empty_catches
     } catch (firebaseAuthException) {}
   }
 }
