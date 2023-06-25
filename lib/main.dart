@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:login_ui/screen/signin.dart';
 
+import 'binding/init_binding.dart';
 import 'controller/auth_controller.dart';
-import 'utils/constants.dart';
+import 'utils/firebase_constants.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,7 +18,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const GetMaterialApp(
-        debugShowCheckedModeBanner: false, home: Signin());
+    return GetMaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: const Signin(),
+      initialBinding: InitBinding(),
+    );
   }
 }

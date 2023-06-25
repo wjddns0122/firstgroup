@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:login_ui/screen/signin.dart';
 
 import '../screen/home.dart';
-import '../utils/constants.dart';
+import '../utils/firebase_constants.dart';
 
 class AuthController extends GetxController {
   static AuthController instance = Get.find();

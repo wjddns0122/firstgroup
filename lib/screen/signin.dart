@@ -33,7 +33,7 @@ class _SigninState extends State<Signin> {
         builder: (BuildContext context) {
           return AlertDialog(
             title: const Text('오류'),
-            content: const Text('로그인 중에 오류가 발생했습니다.'),
+            content: const Text('비밀번호나 이메일이 틀렸습니다. 다시 한번 확인해 주세요!@'),
             actions: <Widget>[
               TextButton(
                 child: const Text('확인'),
