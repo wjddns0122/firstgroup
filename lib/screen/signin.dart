@@ -193,7 +193,8 @@ class ExitConfirmationDialog extends StatelessWidget {
         TextButton(
           child: const Text('아니오'),
           onPressed: () {
-            Navigator.of(context).pop(false); // 다이얼로그 닫기
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: ((context) => const Signin()))); // 다이얼로그 닫기
           },
         ),
         TextButton(
