@@ -9,4 +9,7 @@ class AppColors {
   static const lightblue = Color(0xFF4B68D1);
   static const blackshade = Color(0xFF555555);
   static const hintText = Color(0xFFC7C7CD);
+  static const pink = Color(0xFFFFC8DD);
+  static const purple = Color(0xFF9C89B8);
+  static const green = Color(0xFFCEEDC7);
 }
