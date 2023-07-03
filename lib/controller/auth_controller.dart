@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:login_ui/screen/signin.dart';
 
@@ -7,6 +8,7 @@ import '../utils/firebase_constants.dart';
 
 class AuthController extends GetxController {
   static AuthController instance = Get.find();
+  Rx<Color> selectedColor = const Color(0xFFB47093).obs;
 
   late Rx<User?> firebaseUser;
 
@@ -24,7 +26,9 @@ class AuthController extends GetxController {
     if (user == null) {
       Get.offAll(() => const Signin());
     } else {
-      Get.offAll(() => HomeScreen());
+      Get.offAll(() => HomeScreen(
+            containerColor: selectedColor.value,
+          ));
     }
   }
 

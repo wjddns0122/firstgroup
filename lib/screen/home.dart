@@ -4,10 +4,10 @@ import 'package:get/get.dart';
 import 'package:login_ui/controller/todo_controller.dart';
 import 'package:login_ui/screen/add_todo_page.dart';
 
-import '../style/app_color.dart';
-
 class HomeScreen extends GetView<TodoController> {
-  HomeScreen({super.key});
+  HomeScreen({super.key, required this.containerColor});
+
+  final Color containerColor;
 
   void signOut() {
     final auth = FirebaseAuth.instance;
@@ -30,8 +30,9 @@ class HomeScreen extends GetView<TodoController> {
             width: 200,
             height: 35,
             decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(13),
-                border: Border.all(color: const Color(0xFF9C89B8), width: 1)),
+              borderRadius: BorderRadius.circular(13),
+              border: Border.all(color: const Color(0xFF9C89B8), width: 1),
+            ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -60,7 +61,7 @@ class HomeScreen extends GetView<TodoController> {
           IconButton(
             onPressed: () {
               Navigator.pushReplacement(context,
-                  MaterialPageRoute(builder: (context) => const AddTask()));
+                  MaterialPageRoute(builder: (context) => AddTodoPage()));
             },
             icon: const Icon(
               Icons.add,
@@ -72,8 +73,9 @@ class HomeScreen extends GetView<TodoController> {
       ),
       body: Column(
         children: [
-          _create(),
+          _task(),
           _todoList(),
+          _logout(),
         ],
       ),
     );
@@ -90,9 +92,9 @@ class HomeScreen extends GetView<TodoController> {
               leading: (todoModel.isDone!)
                   ? GestureDetector(
                       onTap: () => controller.deleteTodo(todoModel.id!),
-                      child: const Icon(
+                      child: Icon(
                         Icons.check_circle,
-                        color: AppColors.pink,
+                        color: containerColor,
                         size: 35,
                       ),
                     )
@@ -100,10 +102,10 @@ class HomeScreen extends GetView<TodoController> {
                       onTap: () {
                         controller.updateTodo(todoModel.id!);
                       },
-                      child: const Icon(
+                      child: Icon(
                         Icons.circle_outlined,
                         size: 35,
-                        color: AppColors.pink,
+                        color: containerColor,
                       ),
                     ),
               subtitle: Text(todoModel.time.toString()),
@@ -115,20 +117,33 @@ class HomeScreen extends GetView<TodoController> {
     );
   }
 
-  Widget _create() {
+  Widget _task() {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        SizedBox(
-          width: 250,
-          child: TextField(
-            controller: controller.createCon,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: const [
+        Padding(
+          padding: EdgeInsets.all(8.0),
+          child: Text(
+            'Task',
+            style: TextStyle(fontSize: 35, fontWeight: FontWeight.w500),
           ),
         ),
-        ElevatedButton(
-          onPressed: () => controller.create(),
-          child: const Icon(Icons.send),
-        ),
+        Padding(
+          padding: EdgeInsets.all(8.0),
+          child: Text(
+            'today',
+            style: TextStyle(),
+          ),
+        )
+      ],
+    );
+  }
+
+  Widget _logout() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        IconButton(onPressed: signOut, icon: const Icon(Icons.logout))
       ],
     );
   }
