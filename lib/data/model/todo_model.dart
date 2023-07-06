@@ -6,8 +6,9 @@ class TodoModel {
   final String todo;
   final Timestamp? time;
   final bool? isDone;
+  Color? color;
 
-  TodoModel({this.id, required this.todo, this.time, this.isDone});
+  TodoModel({this.id, required this.todo, this.time, this.isDone, this.color});
 
   factory TodoModel.fromJson(DocumentSnapshot doc) {
     return TodoModel(

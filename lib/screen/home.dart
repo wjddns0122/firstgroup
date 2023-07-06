@@ -1,13 +1,16 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:login_ui/controller/todo_controller.dart';
 import 'package:login_ui/screen/add_todo_page.dart';
+import 'package:login_ui/style/app_color.dart';
 
 class HomeScreen extends GetView<TodoController> {
-  HomeScreen({super.key, required this.containerColor});
-
-  final Color containerColor;
+  HomeScreen({
+    super.key,
+  });
 
   void signOut() {
     final auth = FirebaseAuth.instance;
@@ -15,7 +18,6 @@ class HomeScreen extends GetView<TodoController> {
   }
 
   final todoController = Get.put(TodoController());
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -81,6 +83,29 @@ class HomeScreen extends GetView<TodoController> {
     );
   }
 
+  Widget _task() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Text('Task',
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 30,
+                fontWeight: FontWeight.w500,
+                color: const Color(0xFF49444C),
+              )),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 20,
+          ),
+          child: Text('today', style: GoogleFonts.plusJakartaSans()),
+        )
+      ],
+    );
+  }
+
   Widget _todoList() {
     return Expanded(
       child: Obx(
@@ -88,54 +113,73 @@ class HomeScreen extends GetView<TodoController> {
           itemCount: controller.todos.length,
           itemBuilder: (context, index) {
             final todoModel = controller.todos[index];
-            return ListTile(
-              leading: (todoModel.isDone!)
-                  ? GestureDetector(
-                      onTap: () => controller.deleteTodo(todoModel.id!),
-                      child: Icon(
-                        Icons.check_circle,
-                        color: containerColor,
-                        size: 35,
-                      ),
-                    )
-                  : GestureDetector(
-                      onTap: () {
-                        controller.updateTodo(todoModel.id!);
-                      },
-                      child: Icon(
-                        Icons.circle_outlined,
-                        size: 35,
-                        color: containerColor,
+            final formattedTime =
+                DateFormat('hh:mm a').format(todoModel.time!.toDate());
+            return Container(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 20, vertical: 8.0),
+              child: Row(
+                children: [
+                  (todoModel.isDone!)
+                      ? GestureDetector(
+                          onTap: () => controller.deleteTodo(todoModel.id!),
+                          child: const Icon(
+                            Icons.check_circle,
+                            color: AppColors.lightred,
+                            size: 50,
+                          ),
+                        )
+                      : GestureDetector(
+                          onTap: () {
+                            controller.updateTodo(todoModel.id!);
+                          },
+                          child: const Icon(
+                            Icons.circle_outlined,
+                            size: 50,
+                            color: AppColors.lightred,
+                          ),
+                        ),
+                  const SizedBox(
+                    width: 16.0,
+                  ),
+                  Expanded(
+                    child: Container(
+                      decoration: BoxDecoration(
+                          color: controller.selectedColor.value,
+                          borderRadius: BorderRadius.circular(10)),
+                      width: 40,
+                      height: 50,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              todoModel.todo,
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 18.0,
+                                fontWeight: FontWeight.bold,
+                                color: const Color(0xFF49444C),
+                              ),
+                            ),
+                            Text(
+                              formattedTime,
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 14.0,
+                                color: const Color(0xFF49444C),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-              subtitle: Text(todoModel.time.toString()),
-              title: Text(todoModel.todo),
+                  ),
+                ],
+              ),
             );
           },
         ),
       ),
-    );
-  }
-
-  Widget _task() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: const [
-        Padding(
-          padding: EdgeInsets.all(8.0),
-          child: Text(
-            'Task',
-            style: TextStyle(fontSize: 35, fontWeight: FontWeight.w500),
-          ),
-        ),
-        Padding(
-          padding: EdgeInsets.all(8.0),
-          child: Text(
-            'today',
-            style: TextStyle(),
-          ),
-        )
-      ],
     );
   }
 

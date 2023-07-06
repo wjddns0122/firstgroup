@@ -7,6 +7,10 @@ import 'package:login_ui/data/repository/todo_repository.dart';
 class TodoController extends GetxController {
   final Rx<List<TodoModel>> _todos = Rx<List<TodoModel>>([]);
   final TextEditingController _controller = TextEditingController();
+  final Rx<Color> selectedColor = Rx<Color>(Colors.transparent);
+  void setSelectedColor(Color color) {
+    selectedColor.value = color;
+  }
 
   List<TodoModel> get todos => _todos.value;
   TextEditingController get createCon => _controller;

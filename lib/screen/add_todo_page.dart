@@ -1,5 +1,8 @@
+import 'dart:js';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:login_ui/screen/home.dart';
 import 'package:get/get.dart';
 import 'package:login_ui/style/app_color.dart';
@@ -12,14 +15,19 @@ class AddTodoPage extends GetView<TodoController> {
   final ValueNotifier<DateTime> selectedDate =
       ValueNotifier<DateTime>(DateTime.now());
 
-  final ValueNotifier<Color> selectedColor = ValueNotifier<Color>(Colors.grey);
+  final categoryValue = ['Work', 'Study', 'Exercise'];
+  String selectedCategory = 'Work';
+
+  final levelimportanceValue = ['important', 'very important', 'Usually'];
+  String selectlevelImportance = 'Usually';
 
   Widget buildTitle(String text) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(text,
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w400)),
+            style: GoogleFonts.plusJakartaSans(
+                fontSize: 18, fontWeight: FontWeight.w400)),
         const SizedBox(height: 5),
       ],
     );
@@ -41,16 +49,18 @@ class AddTodoPage extends GetView<TodoController> {
 
   Widget buildColorContainer(Color color) {
     return GestureDetector(
-      onTap: () {
-        selectedColor.value = color;
-      },
-      child: Container(
-        height: 40,
-        width: 40,
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10), color: color),
-      ),
-    );
+        onTap: () {
+          controller.setSelectedColor(color);
+          Navigator.pop(context as BuildContext, color);
+        },
+        child: Container(
+          height: 40,
+          width: 40,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            color: color,
+          ),
+        ));
   }
 
   String getFormattedDate(DateTime dateTime) {
@@ -113,12 +123,14 @@ class AddTodoPage extends GetView<TodoController> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        getFormattedDate(DateTime.now()),
+                        getFormattedDate(selectedDate.value),
                         style: const TextStyle(fontSize: 16),
                       ),
                       IconButton(
-                        icon: const Icon(CupertinoIcons.calendar,
-                            color: Color(0xFF9C89B8)),
+                        icon: const Icon(
+                          CupertinoIcons.calendar,
+                          color: Color(0xFF9C89B8),
+                        ),
                         onPressed: () {
                           selectDate(context);
                         },
@@ -133,8 +145,23 @@ class AddTodoPage extends GetView<TodoController> {
                 buildContainer(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
-                    children: const [
-                      Icon(Icons.expand_more, color: Color(0xFF9C89B8))
+                    children: [
+                      DropdownButton(
+                        value: selectedCategory,
+                        items: categoryValue
+                            .map(
+                              (e) => DropdownMenuItem(
+                                value: e,
+                                child: Text(e),
+                              ),
+                            )
+                            .toList(),
+                        onChanged: (dynamic value) {},
+                        icon: const Icon(
+                          Icons.expand_more,
+                          color: Color(0xFF9c89B8),
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -145,8 +172,21 @@ class AddTodoPage extends GetView<TodoController> {
                 buildContainer(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
-                    children: const [
-                      Icon(Icons.expand_more, color: Color(0xFF9C89B8))
+                    children: [
+                      DropdownButton(
+                        value: selectlevelImportance,
+                        items: levelimportanceValue
+                            .map((e) => DropdownMenuItem(
+                                  value: e,
+                                  child: Text(e),
+                                ))
+                            .toList(),
+                        onChanged: (dynamic value) {},
+                        icon: const Icon(
+                          Icons.expand_more,
+                          color: Color(0xFF9c89B8),
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -201,11 +241,11 @@ class AddTodoPage extends GetView<TodoController> {
                     onPressed: () {
                       controller.create();
                       Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => HomeScreen(
-                                    containerColor: selectedColor.value,
-                                  )));
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => HomeScreen(),
+                        ),
+                      );
                     },
                     child: const Text(
                       'Add',
